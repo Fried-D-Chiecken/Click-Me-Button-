@@ -1,3 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wish Reveal</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: black;
+}
+
+/* Flash overlay */
+#flash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Fullscreen image */
+#wishImage {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.1s linear;
+}
+</style>
+</head>
+<body>
+
+<div id="flash"></div>
+<img id="wishImage" src="">
+
+<audio id="bgMusic" src="ghost.mp3" loop></audio>
+
 <script>
 window.onload = function() {
 
@@ -21,8 +70,8 @@ window.onload = function() {
 
     function rapidFlash(callback) {
         let flashes = 0;
-        const duration = 700;
-        const interval = 35;
+        const duration = 700;   // 0.7 seconds
+        const interval = 35;    // toggle speed
         const maxFlashes = duration / interval;
 
         const flashInterval = setInterval(function() {
@@ -52,7 +101,7 @@ window.onload = function() {
                     image.style.opacity = "0";
                     current++;
                     showNextImage();
-                }, 500);
+                }, 500); // image visible 0.5 sec
 
             }, 20);
 
@@ -63,3 +112,6 @@ window.onload = function() {
     showNextImage();
 };
 </script>
+
+</body>
+</html>
