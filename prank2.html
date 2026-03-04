@@ -1,65 +1,65 @@
 <script>
-const flash = document.getElementById("flash");
-const image = document.getElementById("wishImage");
-const music = document.getElementById("bgMusic");
+window.onload = function() {
 
-const images = [
-    "ghost1.jpg",
-    "ghost2.jpg",
-    "ghost3.jpg",
-    "ghost4.jpg",
-    "ghost5.jpg",
-    "ghost6.jpg",
-    "ghost7.jpg",
-    "ghost8.jpg",
-    "ghost9.jpg"
-];
+    const flash = document.getElementById("flash");
+    const image = document.getElementById("wishImage");
+    const music = document.getElementById("bgMusic");
 
-/* Preload images */
-images.forEach(src => {
-    const img = new Image();
-    img.src = src;
-});
+    const images = [
+        "ghost1.jpg",
+        "ghost2.jpg",
+        "ghost3.jpg",
+        "ghost4.jpg",
+        "ghost5.jpg",
+        "ghost6.jpg",
+        "ghost7.jpg",
+        "ghost8.jpg",
+        "ghost9.jpg"
+    ];
 
-/* Simple delay helper */
-function wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+    let current = 0;
 
-/* Flash for 0.7 seconds */
-async function rapidFlash() {
-    const duration = 700;      // total flash time (0.7 sec)
-    const interval = 35;       // toggle speed (~20 flashes/sec)
-    const cycles = duration / interval;
+    function rapidFlash(callback) {
+        let flashes = 0;
+        const duration = 700;
+        const interval = 35;
+        const maxFlashes = duration / interval;
 
-    for (let i = 0; i < cycles; i++) {
-        flash.style.opacity = flash.style.opacity === "1" ? "0" : "1";
-        await wait(interval);
+        const flashInterval = setInterval(function() {
+            flash.style.opacity = flash.style.opacity === "1" ? "0" : "1";
+            flashes++;
+
+            if (flashes >= maxFlashes) {
+                clearInterval(flashInterval);
+                flash.style.opacity = "0";
+                callback();
+            }
+        }, interval);
     }
 
-    flash.style.opacity = "0";
-}
+    function showNextImage() {
+        if (current >= images.length) return;
 
-/* Main sequence */
-async function sequence() {
-    for (let i = 0; i < images.length; i++) {
+        rapidFlash(function() {
 
-        await rapidFlash();
+            image.style.opacity = "0";
+            image.src = images[current];
 
-        image.style.opacity = 0;
-        image.src = images[i];
-        await wait(20); // tiny render delay
+            setTimeout(function() {
+                image.style.opacity = "1";
 
-        image.style.opacity = 1;
-        await wait(500); // image visible 0.5 sec
+                setTimeout(function() {
+                    image.style.opacity = "0";
+                    current++;
+                    showNextImage();
+                }, 500);
 
-        image.style.opacity = 0;
-        await wait(50);
+            }, 20);
+
+        });
     }
-}
 
-window.onload = () => {
-    music.play().catch(()=>{});
-    sequence();
+    music.play().catch(function(){});
+    showNextImage();
 };
 </script>
