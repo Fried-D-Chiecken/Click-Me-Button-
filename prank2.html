@@ -15,48 +15,47 @@ const images = [
     "ghost9.jpg"
 ];
 
-let current = 0;
-
 /* Preload images */
 images.forEach(src => {
     const img = new Image();
     img.src = src;
 });
 
-function rapidFlash(callback) {
-    let flashes = 0;
-    const totalFlashes = 10;
-    const interval = 50;
-
-    const flashInterval = setInterval(() => {
-        flash.style.opacity = flash.style.opacity === "1" ? "0" : "1";
-        flashes++;
-
-        if (flashes >= totalFlashes * 2) {
-            clearInterval(flashInterval);
-            flash.style.opacity = "0";
-            callback();
-        }
-    }, interval);
+/* Simple delay helper */
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function sequence() {
-    if (current >= images.length) return;
+/* Flash for 0.7 seconds */
+async function rapidFlash() {
+    const duration = 700;      // total flash time (0.7 sec)
+    const interval = 35;       // toggle speed (~20 flashes/sec)
+    const cycles = duration / interval;
 
-    rapidFlash(() => {
-        image.style.opacity = 0; // ensure hidden first
+    for (let i = 0; i < cycles; i++) {
+        flash.style.opacity = flash.style.opacity === "1" ? "0" : "1";
+        await wait(interval);
+    }
 
-        setTimeout(() => {
-            image.src = images[current];
-            image.style.opacity = 1;
+    flash.style.opacity = "0";
+}
 
-            setTimeout(() => {
-                image.style.opacity = 0;
-                current++;
-                sequence(); // call directly (no delay overlap)
-            }, 800); // image visible time (faster)
-        }, 50);
-    });
+/* Main sequence */
+async function sequence() {
+    for (let i = 0; i < images.length; i++) {
+
+        await rapidFlash();
+
+        image.style.opacity = 0;
+        image.src = images[i];
+        await wait(20); // tiny render delay
+
+        image.style.opacity = 1;
+        await wait(500); // image visible 0.5 sec
+
+        image.style.opacity = 0;
+        await wait(50);
+    }
 }
 
 window.onload = () => {
