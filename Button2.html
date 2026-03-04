@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Wish Reveal</title>
+
+<style>
+body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#flash {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+}
+
+img {
+    max-width: 80%;
+    max-height: 80%;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+</style>
+</head>
+<body>
+
+<div id="flash"></div>
+<img id="wishImage">
+
+<audio id="bgMusic" src="Creepy Little Ghost Girl Laughing.mp3" autoplay loop></audio>
+
+<script>
+const flash = document.getElementById("flash");
+const image = document.getElementById("wishImage");
+
+const images = [
+    "ghost1.jpg",
+    "ghost2.jpg",
+    "ghost3.jpg",
+    "ghost4.jpg",
+    "ghost5.jpg",
+    "ghost6.avif",
+    "ghost7.webp",
+    "ghost8.webp",
+    "ghost9.jpg"
+];
+
+let current = 0;
+
+function rapidFlash(callback) {
+    let flashes = 0;
+    const totalFlashes = 10;
+    const interval = 50;
+
+    let flashInterval = setInterval(() => {
+        flash.style.opacity = flash.style.opacity == 1 ? 0 : 1;
+        flashes++;
+
+        if (flashes >= totalFlashes * 2) {
+            clearInterval(flashInterval);
+            flash.style.opacity = 0;
+            callback();
+        }
+    }, interval);
+}
+
+function sequence() {
+    if (current >= images.length) return;
+
+    rapidFlash(() => {
+        image.src = images[current];
+        image.style.opacity = 1;
+
+        setTimeout(() => {
+            image.style.opacity = 0;
+            current++;
+            setTimeout(sequence, 300);
+        }, 200);
+    });
+}
+
+window.onload = () => {
+    sequence();
+};
+</script>
+
+</body>
+</html>
