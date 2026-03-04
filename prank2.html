@@ -48,10 +48,10 @@ async function sequence() {
 
         image.style.opacity = 0;
         image.src = images[i];
-        await wait(20); // tiny render delay
+        await wait(1); // tiny render delay
 
         image.style.opacity = 1;
-        await wait(50); // image visible 0.5 sec
+        await wait(5); // image visible 0.5 sec
 
         image.style.opacity = 0;
         await wait(50);
