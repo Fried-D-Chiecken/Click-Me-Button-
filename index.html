@@ -78,16 +78,22 @@ button:active {
 let count = 0;
 
 function increase() {
+    if (count >= 20) return; // stop if already 20
+
     count++;
     document.getElementById("counter").innerText = count;
 
-    if (count >= 20) {
+    if (count === 20) {
+        const btn = document.querySelector("button");
+        btn.disabled = true;
+        btn.innerText = "Limit Reached!";
+        btn.style.opacity = "0.6";
+
         setTimeout(() => {
-            window.location.href = "Button2.html";
+            window.location.href = "prank2.html";
         }, 500);
     }
 }
-
 /* PARTICLES */
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
