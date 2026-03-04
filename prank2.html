@@ -1,52 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wish Reveal</title>
-
-<style>
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-    background: black;
-}
-
-/* White flash overlay */
-#flash {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: white;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 10;
-}
-
-/* Fullscreen image */
-#wishImage {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;   /* fills entire screen properly */
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-</style>
-</head>
-<body>
-
-<div id="flash"></div>
-<img id="wishImage">
-
-<audio id="bgMusic" src="Creepy Little Ghost Girl Laughing.mp3" loop></audio>
-
 <script>
 const flash = document.getElementById("flash");
 const image = document.getElementById("wishImage");
@@ -66,19 +17,24 @@ const images = [
 
 let current = 0;
 
-/* 10 flashes in 1 second */
+/* Preload images */
+images.forEach(src => {
+    const img = new Image();
+    img.src = src;
+});
+
 function rapidFlash(callback) {
     let flashes = 0;
     const totalFlashes = 10;
     const interval = 50;
 
     const flashInterval = setInterval(() => {
-        flash.style.opacity = flash.style.opacity == 1 ? 0 : 1;
+        flash.style.opacity = flash.style.opacity === "1" ? "0" : "1";
         flashes++;
 
         if (flashes >= totalFlashes * 2) {
             clearInterval(flashInterval);
-            flash.style.opacity = 0;
+            flash.style.opacity = "0";
             callback();
         }
     }, interval);
@@ -88,23 +44,23 @@ function sequence() {
     if (current >= images.length) return;
 
     rapidFlash(() => {
-        image.src = images[current];
-        image.style.opacity = 1;
+        image.style.opacity = 0; // ensure hidden first
 
         setTimeout(() => {
-            image.style.opacity = 0;
-            current++;
-            setTimeout(sequence, 300);
-        }, 1500); // image visible duration
+            image.src = images[current];
+            image.style.opacity = 1;
+
+            setTimeout(() => {
+                image.style.opacity = 0;
+                current++;
+                sequence(); // call directly (no delay overlap)
+            }, 800); // image visible time (faster)
+        }, 50);
     });
 }
 
 window.onload = () => {
-    // Start music after interaction redirect
-    music.play().catch(() => {});
+    music.play().catch(()=>{});
     sequence();
 };
 </script>
-
-</body>
-</html>
